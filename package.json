@@ -1,0 +1,27 @@
+{
+  "name": "url-shrt",
+  "version": "1.0.0",
+  "description": "URL shortener",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GSkouroupathis/url-shrt.git"
+  },
+  "keywords": [
+    "url",
+    "shortener"
+  ],
+  "author": "George Skouroupathis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GSkouroupathis/url-shrt/issues"
+  },
+  "homepage": "https://github.com/GSkouroupathis/url-shrt#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "pug": "^2.0.0-beta6"
+  }
+}
