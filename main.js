@@ -13,7 +13,19 @@ var db
 var sendError = function(errorMsg, res) {
 	res.setHeader('Content-Type', 'application/json');
 	res.send(
-		JSON.stringify({ 'success': 'true' , 'url': 'none', 'error': errorMsg}));
+		JSON.stringify({ 'success': 'false' , 'url': 'none', 'error': errorMsg}));
+}
+
+/*FIXME*/
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
 
 // App setup
@@ -48,6 +60,10 @@ app.post('/url', function(req, res) {
 		url = '//' + url;
 	}
 
+	days = parseInt(days);
+	hours = parseInt(hours);
+	minutes = parseInt(minutes);
+
 	var today = new Date();
 	if (days == 0 && hours == 0 && minutes == 0) {
 		var expirationDate = today.add(365 * 100).days();
@@ -58,7 +74,7 @@ app.post('/url', function(req, res) {
 	}
 
 	db.collection(config.db.collection).insertOne(
-		{'_id':/*FIXME*/Math.random().toString(),/*FIXME*/'link':url,'expiry_date_utc':expirationDate},
+		{'_id':/*FIXME*/makeid(),/*FIXME*/'link':url,'expiry_date_utc':expirationDate},
 		function(err, result) {
 			if (err) throw err
 		}
@@ -71,8 +87,14 @@ app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
 	    if (err) throw err
 
 			if (result.length != 0) {
-				var link = result[0].link;
-				res.redirect(301, link);
+				var now = new Date();
+				var urlExpiryDate = result[0].expiry_date_utc;/*FIXME*/
+				if (now.getTime() > urlExpiryDate.getTime()) {
+					sendError('The link has expired', res);
+				} else {
+					var link = result[0].link;
+					res.redirect(301, link);
+				}
 			} else {
 				console.log('nop');
 			}
