@@ -16,16 +16,28 @@ var sendError = function(errorMsg, res) {
 		JSON.stringify({ 'success': 'false' , 'url': 'none', 'error': errorMsg}));
 }
 
-/*FIXME*/
-function makeid()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var saveURLtoDB = function(id, url, expirationDate) {
+	db.collection(config.db.collection).insertOne(
+		{'_id':id,/*FIXME*/'link':url,'expiry_date_utc':expirationDate},
+		function(err, result) {
+			if (err) throw err
+		}
+	)
+}
 
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+function getNextID(url, expirationDate, callback) {
+	var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
-    return text;
+	db.collection(config.db.collection).find().limit(1).sort({$natural:-1}).toArray(function (err, result) {
+		if (err) throw err
+		if (result.length == 1) {
+			var currentID = result[0]._id
+			var nextID = utils.toRadix(utils.fromRadix(currentID, alphabet) + 1, alphabet)
+		} else {
+			nextID = alphabet[0]
+		}
+		callback(nextID, url, expirationDate)
+	})
 }
 
 // App setup
@@ -73,12 +85,7 @@ app.post('/url', function(req, res) {
 		expirationDate = expirationDate.add(minutes).minutes();
 	}
 
-	db.collection(config.db.collection).insertOne(
-		{'_id':/*FIXME*/makeid(),/*FIXME*/'link':url,'expiry_date_utc':expirationDate},
-		function(err, result) {
-			if (err) throw err
-		}
-	)
+	getNextID ( url, expirationDate, saveURLtoDB )
 	res.sendStatus(200)
 })
 
