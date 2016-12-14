@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>url shrt</title>
+  <meta name="description" content="URL shortener">
+  <meta name="author" content="George Skouroupathis">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Exo" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="icon" type="image/png" href="/static/images/favicon.png">
+
+	<!-- Scripts
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="topnavdivparent">
+    <!---->
+  </div>
+
+  <div data-ng-app="url-shrt" data-ng-controller="url-shrt-controller" class="container">
+
+		<form>
+		<div class="row" style="margin-top:10%;">
+			<div class="twelve columns">
+		 		<input class="u-full-width" placeholder="URL to be shortened" id="urlInput" type="text">
+	 		</div>
+		</div>
+
+		<div class="row">
+			<div class="twelve columns">
+				<label for="daysInput">Days</label>
+				<input class="u-full-width" id="daysInput" type="range" value="50">
+		 	</div>
+ 		</div>
+
+		<div class="row">
+			<div class="twelve columns">
+				<label for="hoursInput">Hours</label>
+				<input class="u-full-width" id="hoursInput" type="range" value="50">
+		 	</div>
+ 		</div>
+
+		<div class="row">
+			<div class="twelve columns">
+				<label for="minutesInput">Minutes</label>
+				<input class="u-full-width" id="minutesInput" type="range" value="50">
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="six columns">
+				<input class="u-full-width" type="text">
+	 		</div>
+
+			<div class="six columns">
+				<input class="button-primary" id="urlSubmit" value="Submit" type="submit">
+	 		</div>
+ 		</div
+ 		</form>
+
+    <div class="push"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footerContainer">
+      <div class="footerMain">
+        <div class="row">
+          <div class="twelve columns">
+            footer
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

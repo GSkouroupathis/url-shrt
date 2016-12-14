@@ -4,6 +4,7 @@ var	express = require('express')
 		MongoClient = require('mongodb').MongoClient
 		bodyParser = require('body-parser')
 		datejs = require('datejs')
+		favicon = require('serve-favicon')
 		utils = require('./utils')
 		config = require('./config')
 
@@ -42,15 +43,16 @@ function getNextID(url, expirationDate, callback) {
 
 // App setup
 app.set('views', './views')
-app.set('view engine', 'pug')
+app.set('view engine', 'ejs')
 
-app.use('./static', express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.png')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Handlers
 app.get('/', function(req, res) {
-	res.render('index', {'title':'Title', 'message':'Hello'})
+	res.render('index')
 })
 
 app.post('/url', function(req, res) {
