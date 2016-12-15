@@ -13,7 +13,7 @@ utils = {
 			N += alphabet.indexOf(HexN[i]) * Math.pow(radix,power);
 			power--;
 		}
-		console.log(N);
+
 		return N;
 	},
 
@@ -26,7 +26,7 @@ utils = {
 			Q=(Q-R)/radix;
 			if (Q==0) break;
 		}
-		console.log(((N<0) ? "-"+HexN : HexN));
+
 		return ((N<0) ? "-"+HexN : HexN);
 	}
 };

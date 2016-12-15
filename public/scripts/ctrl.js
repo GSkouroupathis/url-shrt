@@ -1,4 +1,4 @@
-app.controller('url-shrt-controller', function($scope, $http) {
+app.controller('url-shrt-controller', function($scope, $http, $location) {
 	$scope.urlOutStyle = {
 		'display': 'inline-block',
 		'text-align': 'center'
@@ -20,17 +20,22 @@ app.controller('url-shrt-controller', function($scope, $http) {
 		.then(function(response) {
 			// Handle success
 			if (response.status == 200) {
-				if (response.data.error) {
-					// Display error message
-					console.log('error message')
+				if (response.data.status == 'success') {
+					// Display sucess message
+					var link = response.data.message;
+					$scope.urlOutHref = $location.protocol() + '://' + location.host + '/' + link;
+					$scope.urlOutput = $location.protocol() + '://' + location.host + '/' + link;
 				} else {
-					// Display other message
-					console.log('other message')
+					// Display error message
+					var errMsg = response.data.message;
+					$scope.urlOutHref = '#';
+					$scope.urlOutput = errMsg;
 				}
 			}
 		}, function(response) {
 			// Handle network error
-			console.log('network error')
+			$scope.urlOutHref = '#';
+			$scope.urlOutput = 'Network error, try again later';
 		});
 	}
 });

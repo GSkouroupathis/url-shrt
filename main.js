@@ -11,10 +11,18 @@ var	express = require('express')
 var db
 
 // Helper functions
-var sendError = function(errorMsg, res) {
+var sendMessage = function(status, message, res) {
 	res.setHeader('Content-Type', 'application/json');
 	res.send(
-		JSON.stringify({'error': errorMsg}));
+		JSON.stringify({'status': status, 'message': message}));
+}
+
+var sendSuccess = function(message, res) {
+	sendMessage('success', message, res)
+}
+
+var sendError = function(errorMsg, res) {
+	sendMessage('error', errorMsg, res)
 }
 
 var saveURLtoDB = function(id, url, expirationDate) {
@@ -26,7 +34,7 @@ var saveURLtoDB = function(id, url, expirationDate) {
 	)
 }
 
-function getNextID(url, expirationDate, callback) {
+function getNextID(url, expirationDate, callback1, res, callback2) {
 	var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 	db.collection(config.db.collection).find().limit(1).sort({$natural:-1}).toArray(function (err, result) {
@@ -37,7 +45,8 @@ function getNextID(url, expirationDate, callback) {
 		} else {
 			nextID = alphabet[0]
 		}
-		callback(nextID, url, expirationDate)
+		callback1(nextID, url, expirationDate)
+		callback2(nextID.toString(), res)
 	})
 }
 
@@ -51,8 +60,13 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Handlers
-app.get('/', function(req, res) {
+var renderIndex = function(req, res) {
 	res.render('index')
+}
+
+app.get('/', function(req, res) {
+	//res.render('index')
+	renderIndex(req, res)
 })
 
 app.post('/url', function(req, res) {
@@ -68,6 +82,12 @@ app.post('/url', function(req, res) {
 
 	if (!days || !hours || !minutes) {
 		sendError('Trying to hack the Gibson?', res);
+		return;
+	}
+
+	if (days < 0 || days > 100 || hours < 0 || hours > 100
+		|| minutes < 0 || minutes > 100) {
+		sendError('Values must be between 0 and 100', res);
 		return;
 	}
 
@@ -92,9 +112,7 @@ app.post('/url', function(req, res) {
 		expirationDate = expirationDate.add(hours).hours();
 		expirationDate = expirationDate.add(minutes).minutes();
 	}
-
-	getNextID ( url, expirationDate, saveURLtoDB )
-	res.sendStatus(200)
+	var nextID = getNextID (url, expirationDate, saveURLtoDB, res, sendSuccess)
 })
 
 app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
@@ -111,7 +129,7 @@ app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
 					res.redirect(301, link);
 				}
 			} else {
-				console.log('nop');
+				renderIndex(req, res)
 			}
 	  })
 	})
