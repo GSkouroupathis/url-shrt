@@ -28,7 +28,9 @@
 
 	<!-- Scripts
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script>
+	<script src="/static/scripts/app.js"></script>
+	<script src="/static/scripts/ctrl.js"></script>
 
 </head>
 <body>
@@ -44,38 +46,38 @@
 		<form>
 		<div class="row" style="margin-top:10%;">
 			<div class="twelve columns">
-		 		<input class="u-full-width" placeholder="URL to be shortened" id="urlInput" type="text">
+		 		<input data-ng-model="urlInput" id="urlInput" class="u-full-width" placeholder="URL to be shortened" type="text">
 	 		</div>
 		</div>
 
 		<div class="row">
 			<div class="twelve columns">
-				<label for="daysInput">Days</label>
-				<input class="u-full-width" id="daysInput" type="range" value="50">
+				<label for="daysInput">Days ({{daysInput}})</label>
+				<input data-ng-model="daysInput" id="daysInput" class="u-full-width" type="range" value="50">
 		 	</div>
  		</div>
 
 		<div class="row">
 			<div class="twelve columns">
-				<label for="hoursInput">Hours</label>
-				<input class="u-full-width" id="hoursInput" type="range" value="50">
+				<label for="hoursInput">Hours ({{hoursInput}})</label>
+				<input data-ng-model="hoursInput" id="hoursInput" class="u-full-width" type="range" value="50">
 		 	</div>
  		</div>
 
 		<div class="row">
 			<div class="twelve columns">
-				<label for="minutesInput">Minutes</label>
-				<input class="u-full-width" id="minutesInput" type="range" value="50">
+				<label for="minutesInput">Minutes ({{minutesInput}})</label>
+				<input class="u-full-width" data-ng-model="minutesInput" id="minutesInput" type="range" value="50">
 			</div>
 		</div>
 
 		<div class="row">
-			<div class="six columns">
-				<input class="u-full-width" type="text">
+			<div class="nine columns" style="line-height: 38px;">
+				<a class="u-full-width" ng-href={{urlOutHref}} data-ng-bind="urlOutput" id="urlOutput" ng-style="urlOutStyle"></a>
 	 		</div>
 
-			<div class="six columns">
-				<input class="button-primary" id="urlSubmit" value="Submit" type="submit">
+			<div class="three columns">
+				<input ng-click="sendURL()" class="button-primary u-full-width" id="urlSubmit" value="Submit" type="submit">
 	 		</div>
  		</div
  		</form>

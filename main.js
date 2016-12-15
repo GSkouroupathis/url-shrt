@@ -14,7 +14,7 @@ var db
 var sendError = function(errorMsg, res) {
 	res.setHeader('Content-Type', 'application/json');
 	res.send(
-		JSON.stringify({ 'success': 'false' , 'url': 'none', 'error': errorMsg}));
+		JSON.stringify({'error': errorMsg}));
 }
 
 var saveURLtoDB = function(id, url, expirationDate) {
@@ -61,14 +61,20 @@ app.post('/url', function(req, res) {
 			hours		= req.body.hours,
 			minutes	= req.body.minutes;
 
-	if (!url || !url.length)
+	if (!url || !url.length) {
 		sendError('Please provide a URL', res);
+		return;
+	}
 
-	if (!days || !hours || !minutes)
+	if (!days || !hours || !minutes) {
 		sendError('Trying to hack the Gibson?', res);
+		return;
+	}
 
-	if (isNaN(days) || isNaN(hours) || isNaN(minutes))
+	if (isNaN(days) || isNaN(hours) || isNaN(minutes)) {
 		sendError('Days, hours and minutes must be numeric values', res);
+		return;
+	}
 
 	if (!utils.urlHasScheme(url)) {
 		url = '//' + url;
