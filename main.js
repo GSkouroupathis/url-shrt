@@ -6,6 +6,7 @@ var	express = require('express')
 		datejs = require('datejs')
 		favicon = require('serve-favicon')
 		utils = require('./utils')
+		cleanUp = require('./cleanup')
 		config = require('./config')
 
 var db
@@ -65,7 +66,6 @@ var renderIndex = function(req, res) {
 }
 
 app.get('/', function(req, res) {
-	//res.render('index')
 	renderIndex(req, res)
 })
 
@@ -80,19 +80,21 @@ app.post('/url', function(req, res) {
 		return;
 	}
 
-	if (!days || !hours || !minutes) {
+	if (typeof(days) === 'undefined'
+	|| typeof(hours) === 'undefined'
+	|| typeof(minutes) === 'undefined') {
 		sendError('Trying to hack the Gibson?', res);
+		return;
+	}
+
+	if (isNaN(days) || isNaN(hours) || isNaN(minutes)) {
+		sendError('Days, hours and minutes must be numeric values', res);
 		return;
 	}
 
 	if (days < 0 || days > 100 || hours < 0 || hours > 100
 		|| minutes < 0 || minutes > 100) {
 		sendError('Values must be between 0 and 100', res);
-		return;
-	}
-
-	if (isNaN(days) || isNaN(hours) || isNaN(minutes)) {
-		sendError('Days, hours and minutes must be numeric values', res);
 		return;
 	}
 
@@ -104,11 +106,12 @@ app.post('/url', function(req, res) {
 	hours = parseInt(hours);
 	minutes = parseInt(minutes);
 
-	var today = new Date();
+	var now = new Date();
+	var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 	if (days == 0 && hours == 0 && minutes == 0) {
-		var expirationDate = today.add(365 * 100).days();
+		var expirationDate = now_utc.add(365 * 100).days();
 	} else {
-		var expirationDate = today.add(days).days();
+		var expirationDate = now_utc.add(days).days();
 		expirationDate = expirationDate.add(hours).hours();
 		expirationDate = expirationDate.add(minutes).minutes();
 	}
@@ -121,8 +124,9 @@ app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
 
 			if (result.length != 0) {
 				var now = new Date();
+				var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 				var urlExpiryDate = result[0].expiry_date_utc;/*FIXME*/
-				if (now.getTime() > urlExpiryDate.getTime()) {
+				if (now_utc.getTime() > urlExpiryDate.getTime()) {
 					sendError('The link has expired', res);
 				} else {
 					var link = result[0].link;
@@ -140,6 +144,8 @@ var dbConnectURL = 'mongodb://localhost:'+config.db.port+'/'+config.db.name;
 MongoClient.connect(dbConnectURL, function (err, database) {
 	if (err) throw err
 	db = database
+	cleanUp.start(db, config.cleanup.timeoutMillis)
+
 	var server = app.listen(3020, function() {
 		console.log('Running on port ' + server.address().port)
 	})
