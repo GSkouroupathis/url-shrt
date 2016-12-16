@@ -28,7 +28,7 @@ var sendError = function(errorMsg, res) {
 
 var saveURLtoDB = function(id, url, expirationDate) {
 	db.collection(config.db.collection).insertOne(
-		{'_id':id,/*FIXME*/'link':url,'expiry_date_utc':expirationDate},
+		{'_id':id, 'url':url, 'expiry_date_utc':expirationDate},
 		function(err, result) {
 			if (err) throw err
 		}
@@ -142,7 +142,10 @@ app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
 var dbConnectURL = 'mongodb://localhost:'+config.db.port+'/'+config.db.name;
 
 MongoClient.connect(dbConnectURL, function (err, database) {
-	if (err) throw err
+	if (err) {
+		console.error(err)
+		process.exit(1)
+	}
 	db = database
 	cleanUp.start(db, config.cleanup.timeoutMillis)
 

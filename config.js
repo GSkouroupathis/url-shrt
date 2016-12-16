@@ -7,4 +7,5 @@ config.db.collection = 'links';
 
 config.cleanup = {};
 config.cleanup.timeoutMillis = 1000 * 60 * 60 * 24;
+
 module.exports = config;
