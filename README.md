@@ -15,3 +15,7 @@ It's a URL shortener
 	`docker-compose up -d`
 
 3. Navigate to port 3020
+
+## Features
+1. Shortens URLs
+2. Cleans up expired URLs every `n` time unit
