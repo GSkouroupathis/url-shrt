@@ -1,0 +1,9 @@
+url-shrt:
+ image: url-shrt
+ ports:
+  - "3020:3020"
+ links:
+  - mongodb
+
+mongodb:
+ image: mongo

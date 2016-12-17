@@ -11,7 +11,7 @@ cleanUp = {
 					'expiry_date_utc': {'$lt': now_utc}
 				},
 				function(err, result) {
-					if (err) throw err
+					if (err) console.error(err)
 				});
 		}, timeoutMillis);
 	}

@@ -30,7 +30,7 @@ var saveURLtoDB = function(id, url, expirationDate) {
 	db.collection(config.db.collection).insertOne(
 		{'_id':id, 'url':url, 'expiry_date_utc':expirationDate},
 		function(err, result) {
-			if (err) throw err
+			if (err) console.error(err)
 		}
 	)
 }
@@ -39,7 +39,8 @@ function getNextID(url, expirationDate, callback1, res, callback2) {
 	var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 	db.collection(config.db.collection).find().limit(1).sort({$natural:-1}).toArray(function (err, result) {
-		if (err) throw err
+		if (err) console.error(err)
+
 		if (result.length == 1) {
 			var currentID = result[0]._id
 			var nextID = utils.toRadix(utils.fromRadix(currentID, alphabet) + 1, alphabet)
@@ -52,7 +53,7 @@ function getNextID(url, expirationDate, callback1, res, callback2) {
 }
 
 // App setup
-app.set('views', './views')
+app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 app.use('/static', express.static(path.join(__dirname, 'public')))
@@ -119,27 +120,27 @@ app.post('/url', function(req, res) {
 })
 
 app.get('/:linkID([a-zA-Z0-9]+)', function(req, res) {
-	  db.collection(config.db.collection).find({'_id':req.params.linkID}).toArray(function (err, result) {
-	    if (err) throw err
+	db.collection(config.db.collection).find({'_id':req.params.linkID}).toArray(function (err, result) {
+	  if (err) console.error(err)
 
-			if (result.length != 0) {
-				var now = new Date();
-				var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
-				var urlExpiryDate = result[0].expiry_date_utc;/*FIXME*/
-				if (now_utc.getTime() > urlExpiryDate.getTime()) {
-					sendError('The link has expired', res);
-				} else {
-					var link = result[0].link;
-					res.redirect(301, link);
-				}
+		if (result.length != 0) {
+			var now = new Date();
+			var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+			var urlExpiryDate = result[0].expiry_date_utc;
+			if (now_utc.getTime() > urlExpiryDate.getTime()) {
+				sendError('The link has expired', res);
 			} else {
-				renderIndex(req, res)
+				var url = result[0].url;
+				res.redirect(301, url);
 			}
-	  })
+		} else {
+			renderIndex(req, res)
+		}
 	})
+})
 
 // Start server
-var dbConnectURL = 'mongodb://localhost:'+config.db.port+'/'+config.db.name;
+var dbConnectURL = 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.name;
 
 MongoClient.connect(dbConnectURL, function (err, database) {
 	if (err) {

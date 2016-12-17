@@ -1,8 +1,9 @@
 var config = {};
 
 config.db = {};
+config.db.host = 'mongodb';
 config.db.port = 27017;
-config.db.name = 'mydb';
+config.db.name = 'links-db';
 config.db.collection = 'links';
 
 config.cleanup = {};

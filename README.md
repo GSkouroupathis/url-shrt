@@ -1,2 +1,17 @@
 # url-shrt
-URL shortener
+
+## About
+It's a URL shortener
+
+## How to run
+1. Bare metal
+	1. Change config.js to point to a MongoDB instance
+	2. Run `node main.js`
+	
+2. Docker
+	1. Build the url-shrt image:
+	`docker build -t url-shrt .`
+	2. Run:
+	`docker-compose up -d`
+
+3. Navigate to port 3020
