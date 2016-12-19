@@ -15,7 +15,7 @@ COPY		public /opt/url-shrt/public
 COPY		views /opt/url-shrt/views
 COPY		cleanup.js /opt/url-shrt/cleanup.js
 COPY		config.js /opt/url-shrt/config.js
-COPY		main.js	/opt/url-shrt/main.js
+COPY		main.js	/opt/url-shrt/index.js
 COPY		package.json /opt/url-shrt/package.json
 COPY		utils.js /opt/url-shrt/utils.js
 
